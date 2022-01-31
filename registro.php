@@ -10,14 +10,13 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
     $correo = $_POST['correo'];
     $password = $_POST['password'];
 
-    $usuario = $db->login($correo, $password);
+    $usuario = $db->registrar($correo, $password);
 
 
-    if ($usuario == null) {
-        $mensaje = "Credenciales no encontradas";
+    if ($usuario) {
+        $mensaje = "Usuario registro exitosamente";
     } else {
-        //INICIAR SESION 
-        header("Location: control_contratos.php");
+        $mensaje = "El usuario ya existe";
     }
 }
 
@@ -26,15 +25,15 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
 <div class="container" style="margin-top: 3%; width: 30rem">
     <div class="card">
         <div class="card-header bg">
-            <h3>Bienvenido</h3>
+            <h3>Registro de usuario</h3>
         </div>
-        <form action="login.php" method="post">
+        <form action="registro.php" method="post">
 
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
                         <label>Nombre de usuario</label>
-                        <input type="text" class="form-control" name="correo" placeholder="NombreUsuario" maxlength="40">
+                        <input type="text" class="form-control" name="correo" placeholder="Correo" maxlength="40">
                     </div>
                 </div>
                 <br>
@@ -47,7 +46,7 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
                 <br>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-secondary">Iniciar sesión</button>
+                        <button type="submit" class="btn btn-secondary">Registrar </button>
                     </div>
                 </div>
                 <br>

@@ -47,16 +47,29 @@ class Db
 
     function query($sql)
     {
-        try{
+        try {
             return $this->db->query($sql);
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             echo $th;
             return array();
         }
     }
 
-    function insert($sql){
+    function insert($sql)
+    {
         $this->query($sql);
         return $this->db->insert_id;
     }
+
+    function login($correo, $password)
+    {
+        $usuario = $this->row("SELECT * from usuarios WHERE correo = '$correo' and contrasenia = '$password'");
+        return $usuario;
+    }
+
+    function registrar($correo, $password){
+        $this->query("INSERT INTO usuarios(correo, contrasenia) VALUES ('$correo','$password')");
+        return true;
+    }
+
 }

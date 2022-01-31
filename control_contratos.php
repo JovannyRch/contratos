@@ -3,7 +3,7 @@
 <div id="viewport">
     <!-- Sidebar -->
     <div id="sidebar">
-        <header>        
+        <header>
             <a href="#">MENÚ</a>
         </header>
         <ul class="nav">
@@ -19,44 +19,47 @@
         <div class="container-fluid" id="app">
 
             <h3>Control de Contratos</h3>
-            <div class="row" style="margin-top:5%">
-                <div class="col-2">
-                    <label for="noExpediente">No. Expediente</label>
-                    <input type="text" v-model="no_expediente" class="form-control form-control-sm" maxlength="40">
-                </div>
-                <div class="col-4">
-                    <label for="client">Cliente</label>
-                    <input type="text" v-model="cliente" class="form-control form-control-sm" maxlength="40">
-                </div>
-                <div class="col-4">
-                    <label for="responsable">Responsable</label>
-                    <input type="text" v-model="responsable_ejecucion" class="form-control form-control-sm" maxlength="40">
-                </div>
-            </div>
+            <form @submit.prevent="enviarDatos" enctype="multipart/form-data">
 
-            <div class="row" style="margin-top:1%">
-                <div class="col-3">
-                    <label for="noExpediente">Fecha Inicio</label>
-                    <input type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
-                </div>
-
-                <div class="col-3">
-                    <label for="noExpediente">Fecha Termino</label>
-                    <input type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
-                </div>
-
-                <div class="col-4">
-                    <label for="subirContrato">Subir Contrato</label>
-                    <div class="custom-file form-control-sm">
-                        <input type="file" class="custom-file-input" id="customFile">
-                        <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
+                <div class="row" style="margin-top:5%">
+                    <div class="col-2">
+                        <label for="noExpediente">No. Expediente</label>
+                        <input type="text" v-model="no_expediente" class="form-control form-control-sm" maxlength="40">
+                    </div>
+                    <div class="col-4">
+                        <label for="client">Cliente</label>
+                        <input type="text" v-model="cliente" class="form-control form-control-sm" maxlength="40">
+                    </div>
+                    <div class="col-4">
+                        <label for="responsable">Responsable</label>
+                        <input type="text" v-model="responsable_ejecucion" class="form-control form-control-sm" maxlength="40">
                     </div>
                 </div>
 
-                <div class="col-2" style="margin-top:3%">
-                    <button type="button" @click="enviarDatos" class="btn btn-sm btn-secondary"><i class="bi bi-save2"></i>&nbsp;Guardar</button>
+                <div class="row" style="margin-top:1%">
+                    <div class="col-3">
+                        <label for="noExpediente">Fecha Inicio</label>
+                        <input type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
+                    </div>
+
+                    <div class="col-3">
+                        <label for="noExpediente">Fecha Termino</label>
+                        <input type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
+                    </div>
+
+                    <div class="col-4">
+                        <label for="subirContrato">Subir Contrato</label>
+                        <div class="custom-file form-control-sm">
+                            <input type="file" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
+                        </div>
+                    </div>
+
+                    <div class="col-2" style="margin-top:3%">
+                        <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-save2"></i>&nbsp;Guardar</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
         <div class="container-fluid" id="appTwo" style="margin-top:4%">
@@ -107,6 +110,7 @@
 
         methods: {
             enviarDatos: async function() {
+
                 const response = await axios.post('api.php/contratos', {
                     no_expediente: this.no_expediente,
                     cliente: this.cliente,
@@ -119,6 +123,8 @@
                 this.responsable_ejecucion = "";
                 this.fecha_inicio = "";
                 this.fecha_termino = "";
+                appTwo.cargarDatos();  
+                //$.notify("Contrato agregado exitosamente", "success"); TO DO: Add config
             },
 
         }
