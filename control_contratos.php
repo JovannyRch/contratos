@@ -110,7 +110,13 @@
 
         methods: {
             enviarDatos: async function() {
-
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Do you want to continue',
+                    icon: 'error',
+                    confirmButtonText: 'Cool'
+                })
+                return; //https://sweetalert2.github.io/#examples 
                 const response = await axios.post('api.php/contratos', {
                     no_expediente: this.no_expediente,
                     cliente: this.cliente,
@@ -123,7 +129,7 @@
                 this.responsable_ejecucion = "";
                 this.fecha_inicio = "";
                 this.fecha_termino = "";
-                appTwo.cargarDatos();  
+                appTwo.cargarDatos();
                 //$.notify("Contrato agregado exitosamente", "success"); TO DO: Add config
             },
 
