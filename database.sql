@@ -14,3 +14,12 @@ create table contratos(
     descripcion varchar(50)
 );
 
+create table anexos (
+    id_anexos int primary key not null auto_increment,
+    path blob (100),
+    nombre varchar (50),
+    id_contrato int,
+    foreign key(id_contrato)references contratos(id_contrato) on delete cascade
+);
+
+
