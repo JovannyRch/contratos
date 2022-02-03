@@ -10,6 +10,7 @@ create table contratos(
     cliente varchar(50),
     responsable_ejecucion varchar(50),
     fecha_inicio varchar(50),
+    fecha_termino varchar(50),
     path varchar(200)
 );
 
@@ -18,7 +19,7 @@ create table anexos (
     path varchar(200),
     nombre varchar (50),
     id_contrato int,
-    foreign key(id_contrato)references contratos(id_contrato) on delete cascade
+    foreign key(id_contrato) references contratos(id_contrato) on delete cascade
 );
 
 

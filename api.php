@@ -23,8 +23,8 @@ switch ($metodo) {
                 responder($res);
                 break;
             default:
-            responder("Recurso no encontrado con GET");
-            break;
+                responder("Recurso no encontrado con GET");
+                break;
         }
         break;
     case 'POST':
@@ -36,21 +36,22 @@ switch ($metodo) {
                 responder("Libro guardado");
                 break;
 
-             case 'contratos':
-                    $no_expediente = $datos['no_expediente'];
-                    $cliente = $datos['cliente'];
-                    $responsable_ejecucion = $datos['responsable_ejecucion']; 
-                    $fecha_inicio= $datos['fecha_inicio'];
-                    $fecha_termino= $datos['fecha_termino'];
-                    $last_id = $db->insert("INSERT INTO contratos(no_expediente, cliente, responsable_ejecucion, fecha_inicio, fecha_termino) values('$no_expediente', '$cliente', '$responsable_ejecucion', '$fecha_inicio', '$fecha_termino')");
-                    responder("datos guardados");
-                    break;
+            case 'contratos':
+                $no_expediente = $datos['no_expediente'];
+                $cliente = $datos['cliente'];
+                $responsable_ejecucion = $datos['responsable_ejecucion'];
+                $fecha_inicio = $datos['fecha_inicio'];
+                $fecha_termino = $datos['fecha_termino'];
+                $path = $datos['path'];
+                $last_id = $db->insert("INSERT INTO contratos(no_expediente, cliente, responsable_ejecucion, fecha_inicio, fecha_termino, path) values('$no_expediente', '$cliente', '$responsable_ejecucion', '$fecha_inicio', '$fecha_termino', '$path')");
+                responder("datos guardados");
+                break;
 
             case 'eliminar_libro':
-                    $id = $datos['id'];
-                    $db->query("DELETE from libros where id_libro = $id");
-                    responder("Libro eliminado");
-                    break;
+                $id = $datos['id'];
+                $db->query("DELETE from libros where id_libro = $id");
+                responder("Libro eliminado");
+                break;
         }
         break;
     case 'PUT':

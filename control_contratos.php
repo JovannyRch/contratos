@@ -1,16 +1,5 @@
 <?php include('header.php'); ?>
 
-<?php
-
-header('Access-Control-Allow-Origin: *');
-
-if (move_uploaded_file($_FILES["file"]["tmp_name"], "upload/" . $_FILES['file']['name'])) {
-    echo "done";
-    exit;
-}
-
-
-?>
 
 <div id="app">
 
@@ -127,7 +116,6 @@ if (move_uploaded_file($_FILES["file"]["tmp_name"], "upload/" . $_FILES['file'][
                     }
                 }
             );
-            console.log("Resp", resp);
             return resp;
         } catch (error) {
             console.log("Error", error);
@@ -153,14 +141,16 @@ if (move_uploaded_file($_FILES["file"]["tmp_name"], "upload/" . $_FILES['file'][
         methods: {
             enviarDatos: async function() {
                 const respUploadFile = await subirArchivo(this.file);
-                console.log("respUploadFile", respUploadFile);
-
+                const {
+                    data
+                } = respUploadFile;
                 const response = await axios.post('api.php/contratos', {
                     no_expediente: this.no_expediente,
                     cliente: this.cliente,
                     responsable_ejecucion: this.responsable_ejecucion,
                     fecha_inicio: this.fecha_inicio,
                     fecha_termino: this.fecha_termino,
+                    path: data.ruta
                 });
                 this.no_expediente = "";
                 this.cliente = "";
