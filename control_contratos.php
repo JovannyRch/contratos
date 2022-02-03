@@ -87,7 +87,9 @@
                             <td>{{contrato.responsable_ejecucion}}</td>
                             <td>{{contrato.fecha_inicio}}</td>
                             <td>{{contrato.fecha_termino}}</td>
-                            <td></td>
+                            <td>
+                                <a :href="contrato.path" target="_blank">Ver archivo</a>
+                            </td>
                             <td>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-trash"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></button>
