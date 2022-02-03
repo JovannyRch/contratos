@@ -158,7 +158,11 @@
                 this.fecha_inicio = "";
                 this.fecha_termino = "";
                 this.cargarDatos();
-                //$.notify("Contrato agregado exitosamente", "success"); TO DO: Add config
+                Swal.fire(
+                    '¡Contrato guardado!',
+                    'El contrato se ha guardado con éxito',
+                    'success'
+                )
             },
             onChangeFileUpload: async function() {
                 this.file = this.$refs.file.files[0];
