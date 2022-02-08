@@ -91,7 +91,7 @@
                                 <a :href="contrato.path" target="_blank">Ver archivo</a>
                             </td>
                             <td>
-                                <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-trash"></i></button>
+                                <button @click="eliminar(contrato)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-trash"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></button>
@@ -174,12 +174,12 @@
                 const response = await axios("api.php/contratos");
                 this.contratos = response.data;
             },
-            eliminar: async function(libro) {
+            eliminar: async function(contrato) {
 
-                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el libro ${libro.titulo}?`);
+                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el libro ${contrato.cliente}?`);
                 if (respuestaUsuario) {
-                    const response = await axios.post('api.php/eliminar_libro', {
-                        id: libro.id_libro
+                    const response = await axios.post('api.php/eliminar_contrato', {
+                        id: contrato.id_contrato
                     });
                     this.cargarDatos();
                 }
