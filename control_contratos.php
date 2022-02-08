@@ -176,7 +176,7 @@
             },
             eliminar: async function(contrato) {
 
-                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el libro ${contrato.cliente}?`);
+                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el contrato?`);
                 if (respuestaUsuario) {
                     const response = await axios.post('api.php/eliminar_contrato', {
                         id: contrato.id_contrato
