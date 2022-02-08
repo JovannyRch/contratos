@@ -52,6 +52,11 @@ switch ($metodo) {
                 $db->query("DELETE from libros where id_libro = $id");
                 responder("Libro eliminado");
                 break;
+            case 'eliminar_contrato':
+                $id = $datos['id'];
+                $db->query("DELETE from contratos where id_contrato = $id");
+                responder("Contrato eliminado");
+                break;
         }
         break;
     case 'PUT':
