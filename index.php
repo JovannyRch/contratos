@@ -91,11 +91,10 @@
                                 <a :href="contrato.path" target="_blank">Ver archivo</a>
                             </td>
                             <td>
-                                <button @click="eliminar(contrato)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-trash"></i></button>
-                                <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                                <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i></button>
-                                <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></button>
-                        </tr>
+                                <button @click="eliminar(contrato)" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                <a :href="`contrato.php?id=${contrato.id_contrato}`" type="button" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
+                            </td>
+                            </tr>
                     </tbody>
                 </table>
             </div>
