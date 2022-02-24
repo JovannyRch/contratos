@@ -167,7 +167,6 @@
             },
             onChangeFileUpload: async function() {
                 this.file = this.$refs.file.files[0];
-                console.log("File", this.file);
             },
             cargarDatos: async function() {
                 const response = await axios("api.php/contratos");

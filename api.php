@@ -47,6 +47,12 @@ switch ($metodo) {
                 responder("datos guardados");
                 break;
 
+            case 'anexos':
+                $path = $datos["path"];
+                $id_contrato = $datos["id_contrato"];
+                $last_id = $db->insert("INSERT INTO anexos(path, nombre, id_contrato) values('$path', 'default name', '$id_contrato')");
+                responder("Datos guardados");
+                break;
             case 'eliminar_libro':
                 $id = $datos['id'];
                 $db->query("DELETE from libros where id_libro = $id");
@@ -56,6 +62,10 @@ switch ($metodo) {
                 $id = $datos['id'];
                 $db->query("DELETE from contratos where id_contrato = $id");
                 responder("Contrato eliminado");
+                break;
+            case 'get_anexos':
+                $id = $datos['id'];
+                responder($db->array("SELECT * from anexos where id_contrato = $id"));
                 break;
         }
         break;

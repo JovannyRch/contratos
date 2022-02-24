@@ -66,15 +66,45 @@ $contrato['anexos'] = $db->array("SELECT * from anexos where id_contrato = $id_c
 
 
                         <h5 class="mt-4 mb-3">Anexos</h5>
-                        
-                        <?php if(sizeof($contrato['anexos']) == 0){ ?>
-                            
-                            <div class="alert alert-info" role="alert">
-                                <strong>No se han agregado archivos anexos al contrato</strong>
+                        <form style="opacity: 0" method="POST" enctype="multipart/form-data">
+                            <input type="file" ref="file" class="custom-file-input" @change="onChangeFileUpload" id="customFile">
+                        </form>
+                        <button class="btn btn-success mb-4" @click="agregarAnexo">
+                            <i class="fa fa-plus"></i>
+                            Agregar anexo
+                        </button>
+
+                        <div v-if="loading">
+
+                        </div>
+                        <div v-else>
+                            <div v-if="anexos.length === 0">
+                                <div class="alert alert-info" role="alert">
+                                    <strong>No se han agregado archivos anexos al contrato</strong>
+                                </div>
                             </div>
-                        <?php
-                            }
-                        ?>
+                            <div v-else>
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Archivo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(anexo, index) in anexos">
+                                            <td>
+                                                {{index + 1}}
+                                            </td>
+                                            <td>
+                                                <a :href="anexo.path" target="_blank">Ver anexo</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
 
@@ -83,5 +113,71 @@ $contrato['anexos'] = $db->array("SELECT * from anexos where id_contrato = $id_c
         </div>
     </div>
 </div>
+
+<script>
+    async function subirArchivo(file) {
+
+        try {
+            let formData = new FormData();
+            formData.append('file', file);
+
+            const resp = await axios.post('upload_file.php',
+                formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+            return resp;
+        } catch (error) {
+            console.log("Error", error);
+            return null;
+        }
+
+    }
+
+    const app = new Vue({
+        el: "#content",
+        data: {
+            file: '',
+            id_contrato: '<?= $id_contrato ?>',
+            anexos: [],
+            loading: false,
+        },
+        created: function() {
+            this.cargarDatos();
+        },
+        methods: {
+            async cargarDatos() {
+                this.loading = true;
+                const resp = await axios.post("api.php/get_anexos", {
+                    id: this.id_contrato
+                });
+                this.anexos = resp.data;
+                this.loading = false;
+            },
+            agregarAnexo() {
+                document.getElementById('customFile').click()
+            },
+            onChangeFileUpload: async function() {
+                this.file = this.$refs.file.files[0];
+                const respUploadFile = await subirArchivo(this.file);
+                const {
+                    data
+                } = respUploadFile;
+                const response = await axios.post('api.php/anexos', {
+                    path: data.ruta,
+                    id_contrato: this.id_contrato
+                });
+                Swal.fire(
+                    '¡Anexo guardado!',
+                    'El anexo se ha guardado con éxito',
+                    'success'
+                )
+                this.cargarDatos();
+            },
+        }
+    })
+</script>
 
 <?php include('footer.php'); ?>
