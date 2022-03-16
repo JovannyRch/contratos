@@ -12,23 +12,11 @@ $contrato['anexos'] = $db->array("SELECT * from anexos where id_contrato = $id_c
 
 ?>
 
-<?php include('header.php'); ?>
+<?php include('headers/header_admin.php'); ?>
 
 
-<div id="viewport">
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <header>
-            <a href="#">MENÚ</a>
-        </header>
-        <ul class="nav">
-            <a href="#">CONTROL DE CONTRATOS</a>
-            <a href="#">CONTRATOS CON RETRASO</a>
-            <a href="#">ANEXOS DEL CONTRATO</a>
-            <a href="#">CONTRATOS VIGENTES</a>
-            <a href="#">CONTRATOS TERMINADOS</a>
-        </ul>
-    </div>
+<div>
+
     <!-- Content -->
     <div id="content">
         <div class="container-fluid">

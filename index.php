@@ -28,7 +28,7 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
         $_SESSION['materno'] = $usuario['materno'];
         $_SESSION['puesto'] = $usuario['puesto'];
 
-        header("Location: control_contratos.php");
+        header("Location: contratos.php");
     }
 }
 
@@ -62,7 +62,7 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
                     </div>
 
                     <div class="col-sm-12 mt-2">
-                        <a href="control_contratos.php">Continuar como invitado</a>
+                        <a href="contratos.php">Continuar como invitado</a>
                     </div>
 
 
