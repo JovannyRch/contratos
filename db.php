@@ -20,8 +20,11 @@ class Db
     }
 
 
-    function row($sql)
+    function row($sql, $debug = false)
     {
+        if ($debug) {
+            echo "Row: " . $sql;
+        }
         $arr = $this->array($sql);
 
         if (sizeof($arr) == 0) {
@@ -57,19 +60,35 @@ class Db
 
     function insert($sql)
     {
-        $this->query($sql);
-        return $this->db->insert_id;
+        try {
+            if ($this->query($sql) === TRUE) {
+                return $this->db->insert_id;
+            }
+            return null;
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     function login($correo, $password)
     {
-        $usuario = $this->row("SELECT * from usuarios WHERE correo = '$correo' and contrasenia = '$password'");
+        $usuario = $this->row("SELECT u.*, p.nombre as puesto from usuarios as u inner join puestos p on p.id_puesto = u.id_puesto where u.correo = '$correo' and u.password = '$password' ");
         return $usuario;
     }
 
-    function registrar($correo, $password){
-        $this->query("INSERT INTO usuarios(correo, contrasenia) VALUES ('$correo','$password')");
-        return true;
+    function registrar($nombre, $paterno, $materno, $id_puesto, $correo, $password)
+    {
+        $response = $this->query("INSERT INTO 
+         usuarios(nombre, paterno, materno, id_puesto, correo, password)
+         VALUES ('$nombre','$paterno','$materno','$id_puesto','$correo','$password')");
+        if (is_null($response)) {
+            return false;
+        }
+        return $response;
     }
 
+    function getPuestos()
+    {
+        return $this->array("SELECT * from puestos");
+    }
 }

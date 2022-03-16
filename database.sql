@@ -23,3 +23,23 @@ create table anexos (
 );
 
 
+create table puestos(
+    id_puesto int primary key not null auto_increment,
+    nombre varchar (255)
+);
+
+create table usuarios(
+    id_usuario int primary key not null auto_increment,
+    nombre varchar(50),
+    materno varchar(50),
+    paterno varchar(50),
+    id_puesto int,
+    correo varchar(255),
+    password varchar(255),
+    foreign key(id_puesto) references puestos(id_puesto) on delete cascade
+);
+
+
+insert into puestos(nombre) values('Administrador');
+
+insert into usuarios(nombre, materno, paterno, id_puesto, correo, password) values('Administrador', '', '',1, "admin@admin.com", "admin");

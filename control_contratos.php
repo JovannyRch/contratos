@@ -1,25 +1,28 @@
-<?php include('header.php'); ?>
+<?php
+
+session_start();
+
+$es_invitado = true;
+$header = '';
+if (sizeof($_SESSION) == 0 || !isset($_SESSION['id_usuario'])) {
+    $header = 'headers/header_invitado.php';
+    $es_invitado = true;
+} else {
+    $header = 'headers/header_admin.php';
+    $es_invitado = false;
+}
+
+include_once($header);
+
+?>
 
 
 <div id="app">
 
     <div id="viewport">
-        <!-- Sidebar -->
-        <div id="sidebar">
-            <header>
-                <a href="#">MENÚ</a>
-            </header>
-            <ul class="nav">
-                <a href="#">CONTROL DE CONTRATOS</a>
-                <a href="#">CONTRATOS CON RETRASO</a>
-                <a href="#">ANEXOS DEL CONTRATO</a>
-                <a href="#">CONTRATOS VIGENTES</a>
-                <a href="#">CONTRATOS TERMINADOS</a>
-            </ul>
-        </div>
         <!-- Content -->
         <div id="content">
-            <div class="container-fluid">
+            <div class="container-fluid" v-if="!esInvitado">
 
                 <h3>Control de Contratos</h3>
                 <form @submit.prevent="enviarDatos" enctype="multipart/form-data">
@@ -90,11 +93,15 @@
                             <td>
                                 <a :href="contrato.path" target="_blank">Ver archivo</a>
                             </td>
-                            <td>
+                            <td v-if="esInvitado">
+                                <button @click="ver(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-eye"></i></button>
+                            </td>
+                            <td v-else>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-trash"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-fill"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i></button>
                                 <button @click="eliminar(libro)" type="button" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -126,7 +133,8 @@
 
     }
 
-    const app = new Vue({
+
+    new Vue({
         el: '#app',
         data: {
             no_expediente: "",
@@ -136,6 +144,7 @@
             fecha_termino: "",
             file: '',
             contratos: [],
+            esInvitado: "<?= $es_invitado ?>" === '1'
         },
         created: function() {
             this.cargarDatos();
