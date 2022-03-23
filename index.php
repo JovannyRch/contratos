@@ -44,6 +44,12 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
+                        <img src="assets/logo.jpeg" height="200px" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
                         <label>Nombre de usuario</label>
                         <input type="text" class="form-control" name="correo" placeholder="Nombre de usuario o correo" maxlength="40">
                     </div>
