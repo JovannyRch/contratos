@@ -181,12 +181,12 @@ include_once($header);
                 const response = await axios("api.php/contratos");
                 this.contratos = response.data;
             },
-            eliminar: async function(libro) {
+            eliminar: async function(contrato) {
 
-                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el libro ${libro.titulo}?`);
+                const respuestaUsuario = confirm(`¿Estas seguro de eliminar el contrato #${contrato.no_expediente}?`);
                 if (respuestaUsuario) {
-                    const response = await axios.post('api.php/eliminar_libro', {
-                        id: libro.id_libro
+                    const response = await axios.post('api.php/eliminar_contrato', {
+                        id: contrato.id_contrato
                     });
                     this.cargarDatos();
                 }
