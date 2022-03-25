@@ -22,56 +22,19 @@ include_once($header);
     <div>
         <!-- Content -->
         <div id="content">
-            <div class="container-fluid mt-4" v-if="!esInvitado">
+            <div class="container mt-4" v-if="!esInvitado">
 
                 <h3>Control de Contratos</h3>
-                <form @submit.prevent="enviarDatos" enctype="multipart/form-data">
 
-                    <div class="row" style="margin-top:5%">
-                        <div class="col-2">
-                            <label for="noExpediente">No. Expediente</label>
-                            <input type="text" v-model="no_expediente" class="form-control form-control-sm" maxlength="40">
-                        </div>
-                        <div class="col-4">
-                            <label for="client">Cliente</label>
-                            <input type="text" v-model="cliente" class="form-control form-control-sm" maxlength="40">
-                        </div>
-                        <div class="col-4">
-                            <label for="responsable">Responsable</label>
-                            <input type="text" v-model="responsable_ejecucion" class="form-control form-control-sm" maxlength="40">
-                        </div>
-                    </div>
-
-                    <div class="row" style="margin-top:1%">
-                        <div class="col-3">
-                            <label for="noExpediente">Fecha Inicio</label>
-                            <input type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
-                        </div>
-
-                        <div class="col-3">
-                            <label for="noExpediente">Fecha Termino</label>
-                            <input type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
-                        </div>
-
-                        <div class="col-4">
-                            <label for="subirContrato">Subir Contrato</label>
-                            <div class="custom-file form-control-sm">
-                                <input type="file" ref="file" class="custom-file-input" @change="onChangeFileUpload" id="customFile">
-                                <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
-                            </div>
-                        </div>
-
-                        <div class="col-2" style="margin-top:3%">
-                            <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-save2"></i>&nbsp;Guardar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="container-fluid" style="margin-top:4%">
-                <table class="table">
+                <div class="alert alert-info" role="alert" v-if="clientes.length === 0" class="mt-4">
+                    <strong>No se han encontrado clientes, por favor registre clientes para poder crear contratos</strong>
+                </div>
+                <div style="display: flex; justify-content: flex-end; width: 100%;" v-if="clientes.length !== 0">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal-form" @click="initForm">Agregar contrato</button>
+                </div>
+                <table class="table" v-if="clientes.length > 0">
                     <thead>
-                        <tr class="table-warning">
+                        <tr class="table-light">
                             <th>Id</th>
                             <th>No. Expediente</th>
                             <th>Cliente</th>
@@ -103,7 +66,73 @@ include_once($header);
                         </tr>
                     </tbody>
                 </table>
+                <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Agregar contrato</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <form @submit.prevent="enviarDatos" id="form" enctype="multipart/form-data">
+
+
+                                    <div class="form-group">
+                                        <label for="numero_expediente">Número de Expediente</label>
+                                        <input required type="text" v-model="no_expediente" class="form-control" name="numero_expediente" id="numero_expediente" placeholder="Ingrese número de expediente">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="cliente">Cliente</label>
+                                        <select required class="form-control" v-model="id_cliente">
+                                            <option value="" disabled>Seleccione un cliente</option>
+                                            <option v-for="cliente in clientes" :value="cliente.id_cliente">{{cliente.nombre}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="responsable">Responsable</label>
+                                        <input required type="text" v-model="responsable_ejecucion" class="form-control" name="responsable" id="responsable" placeholder="Ingrese nombre del responsable">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="noExpediente">Fecha Inicio</label>
+                                        <input required type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="noExpediente">Fecha Termino</label>
+                                        <input required type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
+                                    </div>
+
+                                    <div class="alert alert-success" role="alert" v-if="file">
+                                        <strong>Archivo cargado correctamente</strong>
+                                    </div>
+                                    <div class="form-group" v-else>
+                                        <label for="subirContrato">Subir Contrato</label>
+                                        <div class="custom-file form-control-sm">
+                                            <input type="file" ref="file" class="custom-file-input" @change="onChangeFileUpload" id="customFile">
+                                            <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
+                                        </div>
+                                    </div>
+                                    <button id="form-submit-btn" type="submit" style="opacity: 0; width:0; height: 0;">as</button>
+                                </form>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="close-modal-btn" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" @click="submitForm">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -136,26 +165,59 @@ include_once($header);
         el: '#app',
         data: {
             no_expediente: "",
-            cliente: "",
             responsable_ejecucion: "",
             fecha_inicio: "",
             fecha_termino: "",
-            file: '',
+            file: null,
             contratos: [],
-            esInvitado: "<?= $es_invitado ?>" === '1'
+            esInvitado: "<?= $es_invitado ?>" === '1',
+            id_cliente: '',
+            clientes: [],
         },
         created: function() {
             this.cargarDatos();
         },
         methods: {
+            submitForm() {
+                document.getElementById('form-submit-btn').click()
+            },
+
+            initForm: function() {
+                this.file = null;
+                this.no_expediente = '';
+                this.fecha_inicio = '';
+                this.fecha_termino = '';
+                this.id_cliente = '';
+            },
+
             enviarDatos: async function() {
+
+                if (!this.id_cliente || !this.fecha_termino || !this.fecha_inicio || !this.id_cliente) {
+                    Swal.fire(
+                        'Datos incompletos',
+                        'Ingrese los datos del contrato',
+                        'warning'
+                    )
+                    return;
+                }
+
+                if (this.file === null) {
+                    Swal.fire(
+                        'Datos incompletos',
+                        'Suba archivo del contrato',
+                        'warning'
+                    )
+                    return;
+                }
+
+
                 const respUploadFile = await subirArchivo(this.file);
                 const {
                     data
                 } = respUploadFile;
                 const response = await axios.post('api.php/contratos', {
                     no_expediente: this.no_expediente,
-                    cliente: this.cliente,
+                    id_cliente: this.id_cliente,
                     responsable_ejecucion: this.responsable_ejecucion,
                     fecha_inicio: this.fecha_inicio,
                     fecha_termino: this.fecha_termino,
@@ -172,13 +234,14 @@ include_once($header);
                     'El contrato se ha guardado con éxito',
                     'success'
                 )
+                document.getElementById('close-modal-btn').click();
             },
             onChangeFileUpload: async function() {
                 this.file = this.$refs.file.files[0];
-                console.log("File", this.file);
             },
             cargarDatos: async function() {
                 const response = await axios("api.php/contratos");
+                await this.fetchClientes();
                 this.contratos = response.data;
             },
             eliminar: async function(contrato) {
@@ -190,7 +253,11 @@ include_once($header);
                     });
                     this.cargarDatos();
                 }
-            }
+            },
+            fetchClientes: async function() {
+                const response = await axios("api.php/clientes");
+                this.clientes = response.data;
+            },
         },
 
 

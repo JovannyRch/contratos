@@ -4,14 +4,20 @@ create database contratos_db;
 
 use contratos_db;
 
+create table clientes(
+    id_cliente int primary key not null auto_increment,
+    nombre varchar (255)
+);
+
 create table contratos(
     id_contrato int primary key not null auto_increment,
     no_expediente varchar(20) unique,
-    cliente varchar(50),
+    id_cliente int not null,
     responsable_ejecucion varchar(50),
     fecha_inicio varchar(50),
     fecha_termino varchar(50),
-    path varchar(200)
+    path varchar(200),
+    foreign key(id_cliente) references clientes(id_cliente) on delete cascade
 );
 
 create table anexos (
@@ -43,3 +49,4 @@ create table usuarios(
 insert into puestos(nombre) values('Administrador');
 
 insert into usuarios(nombre, materno, paterno, id_puesto, correo, password) values('Administrador', '', '',1, "admin@admin.com", "admin");
+

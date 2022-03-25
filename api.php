@@ -19,8 +19,20 @@ switch ($metodo) {
     case 'GET':
         switch ($ruta) {
             case 'contratos':
-                $res = $db->array("SELECT * from contratos");
+                $res = $db->array("SELECT c.*, clientes.nombre as cliente from contratos c natural join clientes");
                 responder($res);
+                break;
+
+            case 'clientes':
+                $clientes = $db->array("SELECT * from clientes");
+
+                foreach ($clientes as &$cliente) {
+                    $id_cliente = $cliente['id_cliente'];
+                    $total = $db->row("SELECT count(*) total from contratos where id_cliente = $id_cliente")['total'];
+                    $cliente['total_contratos'] = $total;
+                }
+
+                responder($clientes);
                 break;
             default:
                 responder("Recurso no encontrado con GET");
@@ -29,21 +41,20 @@ switch ($metodo) {
         break;
     case 'POST':
         switch ($ruta) {
-            case 'libros':
-                $titulo = $datos['titulo'];
-                $descripcion = $datos['descripcion'];
-                $last_id = $db->insert("INSERT INTO libros(titulo, descripcion) values('$titulo', '$descripcion')");
-                responder("Libro guardado");
-                break;
 
+            case 'registrar_cliente':
+                $nombre = $datos['nombre'];
+                $last_id = $db->insert("INSERT INTO clientes(nombre) values('$nombre')");
+                responder("Cliente registrado");
+                break;
             case 'contratos':
                 $no_expediente = $datos['no_expediente'];
-                $cliente = $datos['cliente'];
+                $id_cliente = $datos['id_cliente'];
                 $responsable_ejecucion = $datos['responsable_ejecucion'];
                 $fecha_inicio = $datos['fecha_inicio'];
                 $fecha_termino = $datos['fecha_termino'];
                 $path = $datos['path'];
-                $last_id = $db->insert("INSERT INTO contratos(no_expediente, cliente, responsable_ejecucion, fecha_inicio, fecha_termino, path) values('$no_expediente', '$cliente', '$responsable_ejecucion', '$fecha_inicio', '$fecha_termino', '$path')");
+                $last_id = $db->insert("INSERT INTO contratos(no_expediente, id_cliente, responsable_ejecucion, fecha_inicio, fecha_termino, path) values('$no_expediente', '$id_cliente', '$responsable_ejecucion', '$fecha_inicio', '$fecha_termino', '$path')");
                 responder("datos guardados");
                 break;
 
@@ -63,6 +74,12 @@ switch ($metodo) {
                 $id = $datos['id'];
                 $db->query("DELETE from anexos where id_anexos = $id");
                 responder("Anexo eliminado");
+                break;
+
+            case 'eliminar_cliente':
+                $id = $datos['id'];
+                $db->query("DELETE from clientes where id_cliente = $id");
+                responder("Cliente eliminado");
                 break;
             case 'get_anexos':
                 $id = $datos['id'];

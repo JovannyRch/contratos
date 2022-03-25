@@ -9,7 +9,6 @@ if (sizeof($_SESSION) > 0) {
     header("Location: logout.php");
 }
 
-
 $db = new Db();
 $mensaje = null;
 if (isset($_POST['password']) && isset($_POST['correo'])) {

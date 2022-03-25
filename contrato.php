@@ -6,7 +6,7 @@ $id_contrato = $_GET['id'];
 $db = new Db();
 
 
-$contrato = $db->row("SELECT * from contratos where id_contrato = $id_contrato");
+$contrato = $db->row("SELECT contratos.*, clientes.nombre as cliente from contratos natural join clientes where contratos.id_contrato = $id_contrato");
 $contrato['anexos'] = $db->array("SELECT * from anexos where id_contrato = $id_contrato");
 
 
@@ -146,7 +146,7 @@ include_once($header);
                                     </button>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary" id="close-modal-btn" data-dismiss="modal">Close</button>
                                     <button type="button" class="btn btn-success" @click="guardarAnexo">Guardar anexo</button>
                                 </div>
                             </div>
@@ -215,8 +215,6 @@ include_once($header);
                 this.file = this.$refs.file.files[0];
             },
             guardarAnexo: async function() {
-                console.log("tipoArchivo", this.tipoArchivo);
-                console.log(this.tipoArchivo.length === 0);
                 if (this.tipoArchivo.length === 0) {
                     Swal.fire(
                         'Error',
@@ -251,6 +249,7 @@ include_once($header);
                     'El anexo se ha guardado con éxito',
                     'success'
                 )
+                document.getElementById('close-modal-btn').click();
                 this.cargarDatos();
             },
             eliminarAnexo: async function(anexo) {
