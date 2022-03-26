@@ -9,15 +9,22 @@ create table clientes(
     nombre varchar (255)
 );
 
+create table responsables(
+    id_responsable int primary key not null auto_increment,
+    nombre varchar (255)
+);
+
 create table contratos(
     id_contrato int primary key not null auto_increment,
     no_expediente varchar(20) unique,
     id_cliente int not null,
-    responsable_ejecucion varchar(50),
+    id_responsable int not null,
+    status varchar(50),
     fecha_inicio varchar(50),
     fecha_termino varchar(50),
     path varchar(200),
-    foreign key(id_cliente) references clientes(id_cliente) on delete cascade
+    foreign key(id_cliente) references clientes(id_cliente) on delete cascade,
+    foreign key(id_responsable) references responsables(id_responsable) on delete cascade
 );
 
 create table anexos (

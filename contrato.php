@@ -6,7 +6,7 @@ $id_contrato = $_GET['id'];
 $db = new Db();
 
 
-$contrato = $db->row("SELECT contratos.*, clientes.nombre as cliente from contratos natural join clientes where contratos.id_contrato = $id_contrato");
+$contrato = $db->row("SELECT c_x_c.*, r.nombre as responsable_ejecucion from (SELECT c.*, clientes.nombre as cliente from contratos c natural join clientes) as c_x_c natural join responsables r where c_x_c.id_contrato = $id_contrato");
 $contrato['anexos'] = $db->array("SELECT * from anexos where id_contrato = $id_contrato");
 
 
@@ -54,6 +54,10 @@ include_once($header);
                                 <?= $contrato['responsable_ejecucion'] ?>
                             </li>
                             <li class="list-group-item ">
+                                <b>Status: </b>
+                                <?= $contrato['status'] ?>
+                            </li>
+                            <li class="list-group-item ">
                                 <b>Fecha inicio: </b>
                                 <?= $contrato['fecha_inicio'] ?>
                             </li>
@@ -80,7 +84,7 @@ include_once($header);
                         </div>
                         <div v-else>
                             <div v-if="anexos.length === 0">
-                                <div class="alert alert-info" role="alert">
+                                <div class="alert alert-info text-center" role="alert">
                                     <strong>No se han agregado archivos anexos al contrato</strong>
                                 </div>
                             </div>

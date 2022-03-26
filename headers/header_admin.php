@@ -32,6 +32,9 @@
                     <a class="nav-link" href="clientes.php">Clientes</a>
                 </li>
                 <li class="nav-item ">
+                    <a class="nav-link" href="responsables.php">Reponsables</a>
+                </li>
+                <li class="nav-item ">
                     <a class="nav-link" href="registrar_usuario.php">Registrar usuario</a>
                 </li>
             </ul>

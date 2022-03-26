@@ -16,45 +16,45 @@ include_once("headers/header_admin.php");
     <div>
         <div class="container mt-4">
 
-            <h3>Control de clientes</h3>
+            <h3>Control de responsables</h3>
 
             <div style="display: flex; justify-content: flex-end; width: 100%;">
                 <button class="btn btn-success btn-sm" data-toggle="modal" id="open-modal-btn" data-target="#modal-form" @click="initForm">
                     <i class="fa fa-plus"></i>
-                    Nuevo cliente
+                    Nuevo responsable
                 </button>
             </div>
 
             <div>
                 <form class="form-inline">
                     <div class="form-group">
-                        <input type="text" v-model="busqueda" class="form-control" placeholder="Bucar cliente">
+                        <input type="text" v-model="busqueda" class="form-control" placeholder="Bucar responsable">
                     </div>
                 </form>
             </div>
 
-            <div class="alert alert-info text-center mt-4" role="alert" v-if="filtroClientes.length === 0">
-                <strong>No se han encontrado clientes</strong>
+            <div class="alert alert-info text-center mt-4" role="alert" v-if="filtro.length === 0">
+                <strong>No se han encontrado responsables</strong>
             </div>
 
             <table class="table mt-3" v-else>
                 <thead>
                     <tr class="table-light">
                         <th>Id</th>
-                        <th>Nombre del cliente</th>
+                        <th>Nombre del Responsable</th>
                         <th>Total contratos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="cliente in filtroClientes">
-                        <td>{{cliente.id_cliente}}</td>
-                        <td>{{cliente.nombre}}</td>
-                        <td>{{cliente.total_contratos}}</td>
+                    <tr v-for="responsable in filtro">
+                        <td>{{responsable.id_responsable}}</td>
+                        <td>{{responsable.nombre}}</td>
+                        <td>{{responsable.total_contratos}}</td>
                         <td>
-                            <a :href="`cliente.php?id=${cliente.id_cliente}`" type="button" class="btn btn-dark btn-sm"><i class="fa fa-eye"></i></a>
-                            <button @click="editar(cliente)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-pen"></i></button>
-                            <button @click="eliminar(cliente)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-trash"></i></button>
+                            <a :href="`responsable.php?id=${responsable.id_responsable}`" type="button" class="btn btn-dark btn-sm"><i class="fa fa-eye"></i></a>
+                            <button @click="editar(responsable)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-pen"></i></button>
+                            <button @click="eliminar(responsable)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -64,7 +64,7 @@ include_once("headers/header_admin.php");
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Registrar nuevo cliente</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Registrar nuevo responsable</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -72,8 +72,8 @@ include_once("headers/header_admin.php");
                         <div class="modal-body">
 
                             <div class="form-group">
-                                <label for="nombre">Nombre del cliente</label>
-                                <input v-model="nombreCliente" type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese nombre del cliente">
+                                <label for="nombre">Nombre del responsable</label>
+                                <input v-model="nombreResponsable" type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese nombre del responsable">
 
                             </div>
 
@@ -81,7 +81,7 @@ include_once("headers/header_admin.php");
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="close-modal-btn" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-success btn-sm" @click="registrar" v-if="id_cliente == null">
+                            <button type="button" class="btn btn-success btn-sm" @click="registrar" v-if="id_responsable == null">
                                 Registrar
                             </button>
                             <button type="button" class="btn btn-success btn-sm" @click="guardarCambios" v-else>
@@ -101,9 +101,9 @@ include_once("headers/header_admin.php");
     new Vue({
         el: '#app',
         data: {
-            clientes: [],
-            nombreCliente: '',
-            id_cliente: null,
+            responsables: [],
+            nombreResponsable: '',
+            id_responsable: null,
             busqueda: '',
         },
         created: function() {
@@ -111,36 +111,36 @@ include_once("headers/header_admin.php");
         },
 
         computed: {
-            filtroClientes: function() {
+            filtro: function() {
 
                 if (this.busqueda.length === 0) {
-                    return this.clientes;
+                    return this.responsables;
                 }
-                return this.clientes.filter((cliente) => cliente.nombre.toLowerCase().includes(this.busqueda.toLowerCase()));
+                return this.responsables.filter((item) => item.nombre.toLowerCase().includes(this.busqueda.toLowerCase()));
             }
         },
         methods: {
 
             initForm: function() {
-                this.id_cliente = null;
-                this.nombreCliente = '';
+                this.id_responsable = null;
+                this.nombreResponsable = '';
             },
 
             guardarCambios: async function() {
 
-                if (this.id_cliente == null) return;
+                if (this.id_responsable == null) return;
 
-                if (this.nombreCliente.length === 0) {
-                    alert("El nombre del cliente no puede estar vacío")
+                if (this.nombreResponsable.length === 0) {
+                    alert("El nombre del responsable no puede estar vacío")
                     return;
                 }
-                const response = await axios.post('api.php/actualizar_cliente', {
-                    id: this.id_cliente,
-                    nombre: this.nombreCliente
+                const response = await axios.post('api.php/actualizar_responsable', {
+                    id: this.id_responsable,
+                    nombre: this.nombreResponsable
                 });
                 Swal.fire(
-                    'Cliente actualizado',
-                    'Se han guardado los cambios del cliente',
+                    'Responsable actualizado',
+                    'Se han guardado los cambios del responsable',
                     'success'
                 )
                 document.getElementById('close-modal-btn').click();
@@ -149,42 +149,42 @@ include_once("headers/header_admin.php");
 
             registrar: async function() {
 
-                if (this.nombreCliente.length === 0) {
+                if (this.nombreResponsable.length === 0) {
                     return;
                 }
 
-                const response = await axios.post('api.php/registrar_cliente', {
-                    nombre: this.nombreCliente
+                const response = await axios.post('api.php/registrar_responsable', {
+                    nombre: this.nombreResponsable
                 });
                 Swal.fire(
-                    'Cliente registrado',
-                    'Se ha guardado el nuevo cliente con éxito',
+                    'Responsable registrado',
+                    'Se ha guardado el nuevo responsable con éxito',
                     'success'
                 )
                 document.getElementById('close-modal-btn').click();
                 this.cargarDatos();
             },
             cargarDatos: async function() {
-                const response = await axios("api.php/clientes_con_total");
-                this.clientes = response.data;
+                const response = await axios("api.php/responsables_con_total");
+                this.responsables = response.data;
             },
-            eliminar: async function(cliente) {
-                if (confirm(`¿Está seguro de eliminar al cliente '${cliente.nombre}'?`)) {
-                    const response = await axios.post('api.php/eliminar_cliente', {
-                        id: cliente.id_cliente
+            eliminar: async function(responsable) {
+                if (confirm(`¿Está seguro de eliminar al responsable '${responsable.nombre}'?`)) {
+                    const response = await axios.post('api.php/eliminar_responsable', {
+                        id: responsable.id_responsable
                     });
                     Swal.fire(
-                        'Cliente eliminado',
-                        'Se ha eliminado al cliente con éxito',
+                        'Responsable eliminado',
+                        'Se ha eliminado al responsable con éxito',
                         'success'
                     )
                     this.cargarDatos();
                 }
             },
-            editar: function(cliente) {
+            editar: function(responsable) {
                 document.getElementById('open-modal-btn').click();
-                this.id_cliente = cliente.id_cliente;
-                this.nombreCliente = cliente.nombre;
+                this.id_responsable = responsable.id_responsable;
+                this.nombreResponsable = responsable.nombre;
             }
         },
 

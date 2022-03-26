@@ -22,114 +22,197 @@ include_once($header);
     <div>
         <!-- Content -->
         <div id="content">
-            <div class="container mt-4" v-if="!esInvitado">
+            <div class="container-fluid mt-4" v-if="!esInvitado">
 
                 <h3>Control de Contratos</h3>
 
-                <div class="alert alert-info" role="alert" v-if="clientes.length === 0" class="mt-4">
-                    <strong>No se han encontrado clientes, por favor registre clientes para poder crear contratos</strong>
+                <div v-if="loading" class="text-center mt-5">
+                    <div class="spinner-border text-primary " role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: flex-end; width: 100%;" v-if="clientes.length !== 0">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal-form" @click="initForm">Agregar contrato</button>
-                </div>
-                <table class="table" v-if="clientes.length > 0">
-                    <thead>
-                        <tr class="table-light">
-                            <th>Id</th>
-                            <th>No. Expediente</th>
-                            <th>Cliente</th>
-                            <th>Responsable</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Termino</th>
-                            <th>Contrato</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="contrato in contratos">
-                            <td>{{contrato.id_contrato}}</td>
-                            <td>{{contrato.no_expediente}}</td>
-                            <td>{{contrato.cliente}}</td>
-                            <td>{{contrato.responsable_ejecucion}}</td>
-                            <td>{{contrato.fecha_inicio}}</td>
-                            <td>{{contrato.fecha_termino}}</td>
-                            <td>
-                                <a :href="contrato.path" target="_blank">Ver archivo</a>
-                            </td>
-                            <td v-if="esInvitado">
-                                <a :href="`contrato.php?id=${contrato.id_contrato}`" type="button" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
-                            </td>
-                            <td v-else>
-                                <button @click="eliminar(contrato)" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                <a :href="`contrato.php?id=${contrato.id_contrato}`" type="button" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Agregar contrato</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                <div v-else>
+                    <div v-if="clientes.length === 0 || responsables.length === 0" class="mt-4">
+                        <div v-if="clientes.length === 0" class="alert alert-info text-center" role="alert" class="mt-4">
+                            <strong>No se han encontrado clientes, por favor registre clientes para poder crear contratos</strong>
+                        </div>
+
+                        <div v-if="responsables.length === 0" class="alert alert-info text-center" role="alert" class="mt-4">
+                            <strong>No se han encontrado responsables, por favor registre responsables para poder crear contratos</strong>
+                        </div>
+
+                    </div>
+
+                    <div v-else>
+                        <div style="display: flex; justify-content: flex-end; width: 100%;" class="mb-4">
+                            <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal-form" @click="initForm">
+                                <i class="fa fa-plus"></i>
+                                Agregar contrato
+                            </button>
+
+                            <button data-toggle="modal" data-target="#modal-status-form" id="modal-status-form-btn" style="display:none">
+
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 com-sm-12">
+                                <div class="form-group">
+                                    <label for="">Filtrar por status</label>
+                                    <select class="custom-select" v-model="filtroStatus">
+                                        <option value="">Sin filtro</option>
+                                        <option :value="estado" v-for="estado in estados">{{estado}}</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="modal-body">
+                        </div>
 
-                                <form @submit.prevent="enviarDatos" id="form" enctype="multipart/form-data">
+                        <div class="alert alert-warning mt-2 text-center" role="alert" v-if="contratos.length === 0">
+                            <strong>No se han encontrado contratos</strong>
+                        </div>
+
+                        <table class="table mt-2" v-else>
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Id</th>
+                                    <th>No. Expediente</th>
+                                    <th>Cliente</th>
+                                    <th>Responsable</th>
+                                    <th>Status</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Termino</th>
+                                    <th>Contrato</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="contrato in filtro">
+                                    <td>{{contrato.id_contrato}}</td>
+                                    <td>{{contrato.no_expediente}}</td>
+                                    <td>{{contrato.cliente}}</td>
+                                    <td>{{contrato.responsable_ejecucion}}</td>
+                                    <td>{{contrato.status}}</td>
+                                    <td>{{contrato.fecha_inicio}}</td>
+                                    <td>{{contrato.fecha_termino}}</td>
+                                    <td>
+                                        <a :href="contrato.path" target="_blank">Ver archivo</a>
+                                    </td>
+                                    <td v-if="esInvitado">
+                                        <a :href="`contrato.php?id=${contrato.id_contrato}`" type="button" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                    <td v-else>
+                                        <a :href="`contrato.php?id=${contrato.id_contrato}`" type="button" class="btn btn-dark btn-sm"><i class="fa fa-eye"></i></a>
+                                        <button @click="editarStatus(contrato)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-pen"></i> Status</button>
+
+                                        <button @click="eliminar(contrato)" type="button" class="btn btn-dark btn-sm"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Agregar contrato</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <form @submit.prevent="enviarDatos" id="form" enctype="multipart/form-data">
 
 
-                                    <div class="form-group">
-                                        <label for="numero_expediente">Número de Expediente</label>
-                                        <input required type="text" v-model="no_expediente" class="form-control" name="numero_expediente" id="numero_expediente" placeholder="Ingrese número de expediente">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="cliente">Cliente</label>
-                                        <select required class="form-control" v-model="id_cliente">
-                                            <option value="" disabled>Seleccione un cliente</option>
-                                            <option v-for="cliente in clientes" :value="cliente.id_cliente">{{cliente.nombre}}</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="responsable">Responsable</label>
-                                        <input required type="text" v-model="responsable_ejecucion" class="form-control" name="responsable" id="responsable" placeholder="Ingrese nombre del responsable">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="noExpediente">Fecha Inicio</label>
-                                        <input required type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label for="noExpediente">Fecha Termino</label>
-                                        <input required type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
-                                    </div>
-
-                                    <div class="alert alert-success" role="alert" v-if="file">
-                                        <strong>Archivo cargado correctamente</strong>
-                                    </div>
-                                    <div class="form-group" v-else>
-                                        <label for="subirContrato">Subir Contrato</label>
-                                        <div class="custom-file form-control-sm">
-                                            <input type="file" ref="file" class="custom-file-input" @change="onChangeFileUpload" id="customFile">
-                                            <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
+                                        <div class="form-group">
+                                            <label for="numero_expediente">Número de Expediente</label>
+                                            <input required type="text" v-model="no_expediente" class="form-control" name="numero_expediente" id="numero_expediente" placeholder="Ingrese número de expediente">
                                         </div>
-                                    </div>
-                                    <button id="form-submit-btn" type="submit" style="opacity: 0; width:0; height: 0;">as</button>
-                                </form>
+
+                                        <div class="form-group">
+                                            <label for="cliente">Cliente</label>
+                                            <select required class="form-control" v-model="id_cliente">
+                                                <option value="" disabled>Seleccione un cliente</option>
+                                                <option v-for="cliente in clientes" :value="cliente.id_cliente">{{cliente.nombre}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="responsable">Responsable</label>
+                                            <select required class="form-control" v-model="id_responsable">
+                                                <option value="" disabled>Seleccione un responsable</option>
+                                                <option v-for="responsable in responsables" :value="responsable.id_responsable">{{responsable.nombre}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select required class="form-control" v-model="status">
+                                                <option v-for="estado in estados" :value="estado">{{estado}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="noExpediente">Fecha Inicio</label>
+                                            <input required type="date" v-model="fecha_inicio" class="form-control form-control-sm" maxlength="40">
+                                        </div>
 
 
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" id="close-modal-btn" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-success" @click="submitForm">Guardar</button>
+                                        <div class="form-group">
+                                            <label for="noExpediente">Fecha Termino</label>
+                                            <input required type="date" v-model="fecha_termino" class="form-control form-control-sm" maxlength="40">
+                                        </div>
+
+                                        <div class="alert alert-success" role="alert" v-if="file">
+                                            <strong>Archivo cargado correctamente</strong>
+                                        </div>
+                                        <div class="form-group" v-else>
+                                            <label for="subirContrato">Subir Contrato</label>
+                                            <div class="custom-file form-control-sm">
+                                                <input type="file" ref="file" class="custom-file-input" @change="onChangeFileUpload" id="customFile">
+                                                <label class="custom-file-label" for="customFile">Selecciona Archivo...</label>
+                                            </div>
+                                        </div>
+                                        <button id="form-submit-btn" type="submit" style="opacity: 0; width:0; height: 0;">as</button>
+                                    </form>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" id="close-modal-btn" data-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-success" @click="submitForm">Guardar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="modal fade" id="modal-status-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Actualizar status del contrato</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select required class="form-control" v-model="contrato_actual.status">
+                                            <option v-for="estado in estados" :value="estado">{{estado}}</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" id="close-status-modal-btn" data-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-success" @click="actualizarCambiosStatus">Guardar cambios</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -172,14 +255,57 @@ include_once($header);
             contratos: [],
             esInvitado: "<?= $es_invitado ?>" === '1',
             id_cliente: '',
+            id_responsable: '',
             clientes: [],
+            responsables: [],
+            loading: true,
+            status: 'En Ejecución',
+            estados: [
+                'En Ejecución',
+                'Suspendido',
+                'Terminado',
+                'En Prorroga de Terminación',
+                'Cancelado',
+                'En Proceso de Cierre',
+                'Penalizado'
+            ],
+            filtroStatus: '',
+            contrato_actual: {
+                status: 'En Ejecución',
+            }
         },
         created: function() {
             this.cargarDatos();
         },
+
+        computed: {
+
+            filtro: function() {
+
+                if (!this.filtroStatus.length) {
+                    return this.contratos;
+                }
+
+                return this.contratos.filter((item) => item.status === this.filtroStatus);
+            }
+        },
         methods: {
             submitForm() {
                 document.getElementById('form-submit-btn').click()
+            },
+
+            editarStatus(contrato) {
+                this.contrato_actual = Object.assign({}, contrato);
+                document.getElementById('modal-status-form-btn').click()
+            },
+            actualizarCambiosStatus: async function() {
+                if (!this.contrato_actual.id_contrato) return;
+                await axios.post('api.php/actualizar_status_contrato', {
+                    id: this.contrato_actual.id_contrato,
+                    status: this.contrato_actual.status
+                })
+                document.getElementById('close-status-modal-btn').click();
+                this.cargarDatos();
             },
 
             initForm: function() {
@@ -188,11 +314,13 @@ include_once($header);
                 this.fecha_inicio = '';
                 this.fecha_termino = '';
                 this.id_cliente = '';
+                this.id_responsable = '';
+                this.status = 'En Ejecución';
             },
 
             enviarDatos: async function() {
 
-                if (!this.id_cliente || !this.fecha_termino || !this.fecha_inicio || !this.id_cliente) {
+                if (!this.id_cliente || !this.fecha_termino || !this.fecha_inicio || !this.id_responsable) {
                     Swal.fire(
                         'Datos incompletos',
                         'Ingrese los datos del contrato',
@@ -218,10 +346,11 @@ include_once($header);
                 const response = await axios.post('api.php/contratos', {
                     no_expediente: this.no_expediente,
                     id_cliente: this.id_cliente,
-                    responsable_ejecucion: this.responsable_ejecucion,
+                    id_responsable: this.id_responsable,
                     fecha_inicio: this.fecha_inicio,
                     fecha_termino: this.fecha_termino,
-                    path: data.ruta
+                    path: data.ruta,
+                    status: this.status
                 });
                 this.no_expediente = "";
                 this.cliente = "";
@@ -240,9 +369,14 @@ include_once($header);
                 this.file = this.$refs.file.files[0];
             },
             cargarDatos: async function() {
+                this.loading = true;
                 const response = await axios("api.php/contratos");
-                await this.fetchClientes();
                 this.contratos = response.data;
+
+                await this.fetchClientes();
+                await this.fetchResponsables();
+
+                this.loading = false;
             },
             eliminar: async function(contrato) {
 
@@ -258,6 +392,10 @@ include_once($header);
                 const response = await axios("api.php/clientes");
                 this.clientes = response.data;
             },
+            fetchResponsables: async function() {
+                const response = await axios("api.php/responsables");
+                this.responsables = response.data;
+            }
         },
 
 
