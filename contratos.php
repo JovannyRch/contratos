@@ -320,11 +320,22 @@ include_once($header);
 
             enviarDatos: async function() {
 
-                if (!this.id_cliente || !this.fecha_termino || !this.fecha_inicio || !this.id_responsable) {
+                if (!this.no_expediente || !this.id_cliente || !this.fecha_termino || !this.fecha_inicio || !this.id_responsable) {
                     Swal.fire(
                         'Datos incompletos',
                         'Ingrese los datos del contrato',
                         'warning'
+                    )
+                    return;
+                }
+
+                const busquedaNoExpediente = this.contratos.find((contrato) => contrato.no_expediente == this.no_expediente);
+
+                if (!!busquedaNoExpediente) {
+                    Swal.fire(
+                        'Error',
+                        'El número de expediente ya se encuentra registrado',
+                        'error'
                     )
                     return;
                 }

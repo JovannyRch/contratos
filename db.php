@@ -66,6 +66,7 @@ class Db
             }
             return null;
         } catch (\Throwable $th) {
+            
             return null;
         }
     }
@@ -90,5 +91,27 @@ class Db
     function getPuestos()
     {
         return $this->array("SELECT * from puestos");
+    }
+
+    function log($logSql)
+    {
+        $usuario = $this->getNombreUsuario();
+        if (!is_null($usuario)) {
+            return $this->insert("INSERT INTO logs(log) values('El usuario $usuario $logSql')");
+        }
+        return null;
+    }
+
+    function getNombreUsuario()
+    {
+        if (sizeof($_SESSION) >= 0) {
+            $nombre = $_SESSION['nombre'];
+            $paterno = $_SESSION['paterno'];
+            $materno = $_SESSION['materno'];
+
+            $nombreCompleto = "$nombre $paterno $materno";
+            return trim($nombreCompleto);
+        }
+        return null;
     }
 }

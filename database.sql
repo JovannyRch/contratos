@@ -53,6 +53,13 @@ create table usuarios(
 );
 
 
+create table logs(
+    id_log int primary key not null auto_increment,
+    log text,
+    fecha timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 insert into puestos(nombre) values('Administrador');
 
 insert into usuarios(nombre, materno, paterno, id_puesto, correo, password) values('Administrador', '', '',1, "admin@admin.com", "admin");

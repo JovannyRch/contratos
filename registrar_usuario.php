@@ -18,11 +18,14 @@ if (sizeof($_POST) > 0) {
     $correo = $_POST['correo'];
     $password = $_POST['password'];
 
+    $nombreCompleto = "$nombre $paterno $materno";
+
     $response = $db->registrar($nombre, $paterno, $materno, $puesto, $correo, $password);
 
     if (is_null($response)) {
         $mensaje = array("type" => "warning", "text" => "Ocurrió un error al intentar registrar el usuario");
     } else {
+        $db->log("registró al usuario $nombreCompleto como $puesto con el correo $correo");
         $mensaje = array("type" => "success", "text" => "Usuario creado exitosamente");
     }
 }

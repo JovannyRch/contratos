@@ -27,7 +27,7 @@ if (isset($_POST['password']) && isset($_POST['correo'])) {
         $_SESSION['materno'] = $usuario['materno'];
         $_SESSION['puesto'] = $usuario['puesto'];
 
-        header("Location: contratos.php");
+        header("Location: dashboard.php");
     }
 }
 
